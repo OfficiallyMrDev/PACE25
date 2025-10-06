@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>PACE 25 — 5x5 Sliding Puzzle</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <img
+      src="assets/pacelogo.png"
+      alt="PACE Logo"
+      style="
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        max-height: 60px;
+        margin: 5px;
+      "
+    />
+    <div class="page">
+      <div class="panel">
+        <div class="left">
+          <div class="header">
+            <div>
+              <h1>PACE 25 — The Grand Reveal</h1>
+            </div>
+          </div>
+
+          <div class="board-wrap">
+            <div
+              id="board"
+              class="board"
+              aria-label="Sliding puzzle board"
+              tabindex="0"
+            ></div>
+          </div>
+        </div>
+
+        <div id="completeBox" class="completed-msg" style="text-align: center">
+          🎉 Puzzle Completed! Nice work.
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js" defer></script>
+  </body>
+</html>

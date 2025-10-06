@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>PACE 25 — Finale</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .final-wrap {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 28px;
+        box-sizing: border-box;
+      }
+      .final-card {
+        max-width: 860px;
+        background: #000; /* popup-like dark card */
+        border: 1px solid rgba(182, 255, 243, 0.08);
+        border-radius: 14px;
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+        padding: 36px 28px;
+        text-align: center;
+      }
+      .hero-title {
+        margin: 0 0 10px 0;
+        font-size: clamp(38px, 6vw, 72px);
+        font-weight: 900;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        background: linear-gradient(90deg, #e9fffb, #b6fff3, #e9fffb);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        filter: drop-shadow(0 2px 10px rgba(0, 210, 195, 0.2));
+      }
+      .hero-sub {
+        margin: 0;
+        font-size: clamp(28px, 4.5vw, 48px);
+        color: #9edfd6;
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
+        opacity: 0.9;
+      }
+      .final-img {
+        margin-top: 16px;
+        max-width: 100%;
+        border-radius: 10px;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+      }
+      .tagline {
+        margin-top: 16px;
+        color: #b7cfe0;
+        min-height: 1.6em;
+        font-size: clamp(16px, 2.4vw, 22px);
+        letter-spacing: 0.02em;
+        opacity: 0; /* will fade in before typing */
+        transition: opacity 0.3s ease;
+        white-space: nowrap;
+        overflow: hidden;
+        border-right: 2px solid rgba(182, 255, 243, 0.85);
+        box-sizing: border-box;
+      }
+      .final-actions {
+        margin-top: 22px;
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+      }
+      .final-actions {
+        margin-top: 16px;
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+      }
+      .final-actions a {
+        display: inline-block;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <img
+      src="assets/pacelogo.png"
+      alt="PACE Logo"
+      style="
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        max-height: 60px;
+        margin: 5px;
+      "
+    />
+    <div class="final-wrap">
+      <div class="final-card">
+        <div id="heroSub" class="hero-sub">PACE</div>
+        <h1 id="heroTitle" class="hero-title">SILVIORA</h1>
+        <div id="tagline" class="tagline"></div>
+        <img class="final-img" src="assets/logorm.png" alt="PACE 25 Reveal" />
+      </div>
+    </div>
+    <script>
+      (function () {
+        const text = "Honoring A Legacy, Illuminating The Future";
+        const el = document.getElementById("tagline");
+        if (el) {
+          const start = () => {
+            el.style.opacity = "1";
+            let i = 0;
+            const speed = 38;
+            const tick = () => {
+              el.textContent = text.slice(0, i++);
+              if (i <= text.length) setTimeout(tick, speed);
+              else {
+                el.style.borderRightColor = "transparent";
+                // Highlight the phrase "Illuminating The Future" (not green)
+                const phrase = "Illuminating The Future";
+                const safe = el.textContent;
+                const idx = safe.indexOf(phrase);
+                if (idx !== -1) {
+                  const before = safe.slice(0, idx);
+                  const target = safe.slice(idx, idx + phrase.length);
+                  const after = safe.slice(idx + phrase.length);
+                  el.innerHTML =
+                    before +
+                    '<span style="color:#66c2ff">' +
+                    target +
+                    "</span>" +
+                    after;
+                }
+              }
+            };
+            tick();
+          };
+          setTimeout(start, 1000);
+        }
+
+        // Entrance animations
+        const heroSub = document.getElementById("heroSub");
+        const heroTitle = document.getElementById("heroTitle");
+        if (heroSub) {
+          heroSub.style.opacity = "0.9";
+          heroSub.animate(
+            [
+              { transform: "translate(40vw, 20vh) scale(0.96)", opacity: 0 },
+              { transform: "translate(0, 0) scale(1)", opacity: 1 },
+            ],
+            {
+              duration: 1200,
+              easing: "cubic-bezier(.2,.8,.2,1)",
+              fill: "forwards",
+            }
+          );
+        }
+        if (heroTitle) {
+          heroTitle.style.filter =
+            "drop-shadow(0 2px 10px rgba(0, 210, 195, 0.35))";
+          heroTitle.animate(
+            [
+              { transform: "translate(-50vw, -30vh) scale(0.9)", opacity: 0 },
+              { transform: "translate(0, 0) scale(1)", opacity: 1 },
+            ],
+            {
+              duration: 1200,
+              easing: "cubic-bezier(.2,.8,.2,1)",
+              fill: "forwards",
+            }
+          );
+          setTimeout(() => {
+            heroTitle.animate(
+              [
+                { transform: "translateY(0)" },
+                { transform: "translateY(-6px)" },
+                { transform: "translateY(0)" },
+              ],
+              { duration: 2800, easing: "ease-in-out", iterations: Infinity }
+            );
+          }, 1250);
+        }
+
+        // Confetti celebration (canvas-confetti)
+        function celebrateSuccess() {
+          var end = Date.now() + 5 * 1000;
+          var colors = ["#00ff88", "#ffffff", "#203a43"];
+          (function frame() {
+            if (window.confetti) {
+              window.confetti({
+                particleCount: 10,
+                angle: 90,
+                spread: 100,
+                origin: { x: 0 },
+                colors: colors,
+              });
+              window.confetti({
+                particleCount: 10,
+                angle: 90,
+                spread: 100,
+                origin: { x: 1 },
+                colors: colors,
+              });
+            }
+            if (Date.now() < end) requestAnimationFrame(frame);
+          })();
+        }
+        function ensureConfetti() {
+          if (window.confetti) {
+            celebrateSuccess();
+            return;
+          }
+          if (document.getElementById("canvas-confetti-lib")) {
+            setTimeout(celebrateSuccess, 1000);
+            return;
+          }
+          var s = document.createElement("script");
+          s.id = "canvas-confetti-lib";
+          s.src =
+            "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
+          s.async = true;
+          s.onload = celebrateSuccess;
+          document.head.appendChild(s);
+        }
+        ensureConfetti();
+      })();
+    </script>
+  </body>
+</html>
