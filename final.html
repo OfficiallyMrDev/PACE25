@@ -53,7 +53,7 @@
         margin-top: 16px;
         color: #b7cfe0;
         min-height: 1.6em;
-        font-size: clamp(16px, 2.4vw, 22px);
+        font-size: clamp(20px, 3vw, 36px);
         letter-spacing: 0.02em;
         opacity: 0; /* will fade in before typing */
         transition: opacity 0.3s ease;
@@ -284,6 +284,25 @@
         }
         ensureConfetti();
       })();
+
+      window.onload = function () {
+        var bgm = document.getElementById("bgmFinal");
+        if (bgm) {
+          bgm.play().catch(function () {
+            // Autoplay was prevented.
+            // Attempt to play again on user interaction.
+            function tryPlay() {
+              bgm.play().catch(function () {});
+              window.removeEventListener("pointerdown", tryPlay);
+              window.removeEventListener("keydown", tryPlay);
+              window.removeEventListener("touchstart", tryPlay, { passive: true });
+            }
+            window.addEventListener("pointerdown", tryPlay, { once: true });
+            window.addEventListener("keydown", tryPlay, { once: true });
+            window.addEventListener("touchstart", tryPlay, { once: true, passive: true });
+          });
+        }
+      };
     </script>
   </body>
 </html>

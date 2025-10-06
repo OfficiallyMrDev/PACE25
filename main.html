@@ -44,6 +44,15 @@
       </div>
     </div>
 
-    <script src="script.js" defer></script>
+    <script src="script.js" defer>
+            window.addEventListener('load', () => {
+        const bgm = document.getElementById('bgm');
+        if (bgm) {
+          bgm.play().catch((err) => {
+            console.log('Autoplay prevented:', err);
+          });
+        }
+      });
+    </script>
   </body>
 </html>
