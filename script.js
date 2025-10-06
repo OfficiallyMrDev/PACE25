@@ -8,6 +8,34 @@ const movesEl = document.getElementById('moves');
 const shuffleBtn = document.getElementById('shuffleBtn');
 const resetBtn = document.getElementById('resetBtn');
 const completeBox = document.getElementById('completeBox');
+const bgmEl = document.getElementById('bgm');
+
+function tryStartBgmWithFallback() {
+  try {
+    if (!bgmEl) return;
+    if (sessionStorage.getItem('playMusic') !== '1') return;
+    bgmEl.currentTime = 0;
+    bgmEl.volume = 0.85;
+    const p = bgmEl.play();
+    if (p && typeof p.catch === 'function') {
+      p.catch(() => {
+        const oneShot = () => {
+          try {
+            bgmEl.currentTime = 0;
+            const p2 = bgmEl.play();
+            if (p2 && typeof p2.catch === 'function') p2.catch(() => {});
+          } catch (e) {}
+          window.removeEventListener('pointerdown', oneShot);
+          window.removeEventListener('keydown', oneShot);
+          window.removeEventListener('touchstart', oneShot, { passive: true });
+        };
+        window.addEventListener('pointerdown', oneShot, { once: true });
+        window.addEventListener('keydown', oneShot, { once: true });
+        window.addEventListener('touchstart', oneShot, { once: true, passive: true });
+      });
+    }
+  } catch (e) {}
+}
 const imageInput = document.getElementById('imageInput');
 const applyImgBtn = document.getElementById('applyImg');
 const imgPathDisplay = document.getElementById('imgPath');
@@ -37,6 +65,8 @@ function initBoard(src) {
   const img = new Image();
   img.src = IMAGE_SRC;
   img.onload = () => {
+    // Try to start BGM; if blocked, wait for first interaction
+    tryStartBgmWithFallback();
     setupTiles(img);
     setTimeout(() => shuffleToSolvable(180), 220);
   };
@@ -238,7 +268,7 @@ function doCompleteAnimation() {
     for (const t of tiles) {
       t.el.style.transform = t.el.style.transform.replace(' scale(1.01)', '');
     }
-    // Smooth fade-to-black, then redirect to finale page
+    // Smooth fade-to-black, then redirect to finale page and stop music after confetti duration
     const overlay = document.createElement('div');
     overlay.style.position = 'fixed';
     overlay.style.inset = '0';
@@ -249,6 +279,14 @@ function doCompleteAnimation() {
     overlay.style.zIndex = '9999';
     document.body.appendChild(overlay);
     requestAnimationFrame(() => { overlay.style.opacity = '1'; });
+    // Store current audio time to resume on final
+    try {
+      if (bgmEl && sessionStorage.getItem('playMusic') === '1') {
+        sessionStorage.setItem('bgmResume', '1');
+        sessionStorage.setItem('bgmTime', String(bgmEl.currentTime || 0));
+        sessionStorage.setItem('triggerFinalMusic', '1');
+      }
+    } catch(e) {}
     setTimeout(() => { window.location.href = 'final.html'; }, 1100);
   }, 400);
 }

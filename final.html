@@ -93,6 +93,7 @@
       "
     />
     <div class="final-wrap">
+      <audio id="bgmFinal" src="assets/Audio.mp3" preload="auto"></audio>
       <div class="final-card">
         <div id="heroSub" class="hero-sub">PACE</div>
         <h1 id="heroTitle" class="hero-title">SILVIORA</h1>
@@ -206,10 +207,71 @@
         function ensureConfetti() {
           if (window.confetti) {
             celebrateSuccess();
+            try {
+              var a = document.getElementById("bgmFinal");
+              var shouldTrigger =
+                sessionStorage.getItem("triggerFinalMusic") === "1";
+              if (a && shouldTrigger) {
+                sessionStorage.removeItem("triggerFinalMusic");
+                a.currentTime = 0; // replay from start on final page
+                a.volume = 0.85;
+                var p = a.play();
+                if (p && typeof p.catch === "function") {
+                  p.catch(function () {
+                    var oneShot = function () {
+                      try {
+                        a.currentTime = 0;
+                        var p2 = a.play();
+                        if (p2 && typeof p2.catch === "function")
+                          p2.catch(function () {});
+                      } catch (e) {}
+                      window.removeEventListener("pointerdown", oneShot);
+                      window.removeEventListener("keydown", oneShot);
+                      window.removeEventListener("touchstart", oneShot, {
+                        passive: true,
+                      });
+                    };
+                    window.addEventListener("pointerdown", oneShot, {
+                      once: true,
+                    });
+                    window.addEventListener("keydown", oneShot, { once: true });
+                    window.addEventListener("touchstart", oneShot, {
+                      once: true,
+                      passive: true,
+                    });
+                  });
+                }
+                setTimeout(function () {
+                  try {
+                    a.pause();
+                  } catch (e) {}
+                }, 5000);
+              }
+            } catch (e) {}
             return;
           }
           if (document.getElementById("canvas-confetti-lib")) {
-            setTimeout(celebrateSuccess, 1000);
+            setTimeout(function () {
+              celebrateSuccess();
+              try {
+                var a = document.getElementById("bgmFinal");
+                var shouldTrigger =
+                  sessionStorage.getItem("triggerFinalMusic") === "1";
+                if (a && shouldTrigger) {
+                  sessionStorage.removeItem("triggerFinalMusic");
+                  a.currentTime = 0; // replay from start on final page
+                  a.volume = 0.85;
+                  var p = a.play();
+                  if (p && typeof p.catch === "function")
+                    p.catch(function () {});
+                  setTimeout(function () {
+                    try {
+                      a.pause();
+                    } catch (e) {}
+                  }, 5000);
+                }
+              } catch (e) {}
+            }, 1000);
             return;
           }
           var s = document.createElement("script");
