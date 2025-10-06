@@ -19,7 +19,7 @@
       "
     />
     <div class="page">
-      <audio id="bgm" src="assets/Audio2.mp3" preload="auto"></audio>
+      <audio id="bgm" src="assets/Audio2.mp3" loop></audio>
       <div class="panel">
         <div class="left">
           <div class="header">
@@ -44,14 +44,25 @@
       </div>
     </div>
 
-    <script src="script.js" defer>
-            window.addEventListener('load', () => {
+    <script src="script.js" defer></script>
+    <script>
+      window.addEventListener('load', () => {
         const bgm = document.getElementById('bgm');
-        if (bgm) {
-          bgm.play().catch((err) => {
-            console.log('Autoplay prevented:', err);
+        if (!bgm) return;
+        bgm.loop = true;
+        const playAudio = () => {
+          bgm.play().catch(() => {
+            // If autoplay is prevented, wait for user interaction
+            const startOnInteraction = () => {
+              bgm.play();
+              window.removeEventListener('click', startOnInteraction);
+              window.removeEventListener('keydown', startOnInteraction);
+            };
+            window.addEventListener('click', startOnInteraction);
+            window.addEventListener('keydown', startOnInteraction);
           });
-        }
+        };
+        playAudio();
       });
     </script>
   </body>
